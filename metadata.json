@@ -1,0 +1,7 @@
+{
+  "name": "Foto Edition Conecta Imóveis",
+  "description": "Um aplicativo web progressivo premium, alimentado por IA, para edição de fotos em massa com design glassmorphism.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
