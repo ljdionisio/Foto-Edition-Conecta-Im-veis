@@ -19,7 +19,8 @@ import {
   Square,
   ZapOff,
   AlertCircle,
-  RotateCcw
+  RotateCcw,
+  Database
 } from 'lucide-react';
 
 export { 
@@ -43,5 +44,6 @@ export {
   Square,
   ZapOff,
   AlertCircle,
-  RotateCcw
+  RotateCcw,
+  Database
 };

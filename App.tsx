@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { 
-  Upload, Camera, Download, Wand2, History, Save, Trash2, X, CheckSquare, Square, ZapOff
+  Upload, Camera, Download, Wand2, History, Save, Trash2, X, CheckSquare, Square, ZapOff, Database
 } from './components/ui/Icons';
 import Toolbar from './components/Toolbar';
 import CanvasPreview from './components/CanvasPreview';
@@ -8,6 +8,7 @@ import { Adjustments, FilterType, ImageFile, Preset, UserConfig } from './types'
 import { DEFAULT_ADJUSTMENTS, FILTERS, MOCK_PRESETS } from './constants';
 import { analyzeImageForEnhancement, blobToBase64, detectPrivacyObjects, GeminiQuotaError, removeBackgroundWithAI } from './services/geminiService';
 import { processImageOnCanvas, downloadBlob, downloadAsZip } from './services/imageUtils';
+import { supabase } from './services/supabase';
 
 export default function App() {
   // --- State ---
@@ -48,6 +49,12 @@ export default function App() {
     if (savedPresets) setPresets(JSON.parse(savedPresets));
     if (savedConfig) setDefaultConfig(JSON.parse(savedConfig));
     if (savedUserConfigs) setUserConfigs(JSON.parse(savedUserConfigs));
+
+    // Check Supabase connection (Optional logging)
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) console.log("Supabase: Usuário conectado", session.user.email);
+        else console.log("Supabase: Pronto (Anônimo)");
+    });
   }, []);
 
   // --- Derived State ---
@@ -458,14 +465,23 @@ export default function App() {
             />
         </div>
 
-        <div className="p-4 border-t border-white/5 bg-black/20">
-            <button 
-                onClick={handleBatchDownload}
-                disabled={images.length === 0 || isProcessing}
-                className="w-full glass-button bg-violet-600/80 hover:bg-violet-500/90 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-                {isProcessing ? 'Processando...' : <><Download size={18} /> Baixar {selectedImageIds.size > 0 ? 'Seleção' : 'Tudo'}</>}
-            </button>
+        <div className="border-t border-white/5 bg-black/20">
+             <div className="p-4">
+                <button 
+                    onClick={handleBatchDownload}
+                    disabled={images.length === 0 || isProcessing}
+                    className="w-full glass-button bg-violet-600/80 hover:bg-violet-500/90 text-white py-3 rounded-lg font-medium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    {isProcessing ? 'Processando...' : <><Download size={18} /> Baixar {selectedImageIds.size > 0 ? 'Seleção' : 'Tudo'}</>}
+                </button>
+             </div>
+             
+             {/* Supabase Status Indicator */}
+             <div className="pb-3 text-center opacity-50 hover:opacity-100 transition-opacity cursor-default">
+                  <div className="text-[9px] text-gray-400 flex items-center justify-center gap-1">
+                      <Database size={10} className="text-green-500" /> Integração Supabase Ativa
+                  </div>
+             </div>
         </div>
       </aside>
 
